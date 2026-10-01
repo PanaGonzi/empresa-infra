@@ -7,3 +7,4 @@ crash.log
 !*.tfvars.example
 # El lock de proveedores SI se sube (.terraform.lock.hcl)
 tfplan
+reintentar*.log

@@ -1,0 +1,4 @@
+# Copia a terraform.tfvars (no se sube a git)
+compartment_ocid = "ocid1.tenancy.oc1..XXXXXXXX" # el OCID del tenancy sirve como compartimento raiz
+# ssh_public_key_path = "~/.ssh/oracle_free.pub"
+# ssh_allowed_cidr    = "TU.IP.PUBLICA.0/32"    # recomendado en vez de 0.0.0.0/0

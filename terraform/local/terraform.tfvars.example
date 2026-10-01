@@ -1,0 +1,3 @@
+# Copia a terraform.tfvars (no se sube a git) y pon claves propias
+oracle_password   = "cambia_esta_clave_admin"
+app_user_password = "cambia_esta_clave_app"

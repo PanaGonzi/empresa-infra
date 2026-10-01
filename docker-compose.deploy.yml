@@ -1,0 +1,39 @@
+# Despliegue a partir de imagenes ya publicadas en GHCR (no se construye nada aqui).
+# Variables obligatorias: BACKEND_IMAGE, FRONTEND_IMAGE, ORACLE_PASSWORD, APP_USER, APP_USER_PASSWORD
+services:
+  oracle:
+    image: gvenzl/oracle-free:slim
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD:?}
+      APP_USER: ${APP_USER:?}
+      APP_USER_PASSWORD: ${APP_USER_PASSWORD:?}
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 15s
+      timeout: 10s
+      retries: 30
+
+  backend:
+    image: ${BACKEND_IMAGE:?}
+    depends_on:
+      oracle:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:oracle:thin:@//oracle:1521/FREEPDB1
+      DB_USER: ${APP_USER:?}
+      DB_PASSWORD: ${APP_USER_PASSWORD:?}
+      TZ: UTC
+    restart: unless-stopped
+
+  frontend:
+    image: ${FRONTEND_IMAGE:?}
+    depends_on:
+      - backend
+    ports:
+      - "${HTTP_PORT:-8081}:80"
+    restart: unless-stopped
+
+volumes:
+  oracle-data:

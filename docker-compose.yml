@@ -1,5 +1,8 @@
-# Entorno local de desarrollo: Oracle Free (usa DBeaver para conectarte)
-# Arranque: docker compose up -d   |   Parada: docker compose down
+# Entorno local de desarrollo.
+#   Solo base de datos:     docker compose up -d
+#   Stack completo (app):   docker compose --profile app up -d --build
+#   Parar:                  docker compose --profile app down
+# Requiere los repos backend/ y frontend/ junto a infra/ (misma carpeta padre).
 services:
   oracle:
     image: gvenzl/oracle-free:slim
@@ -17,6 +20,29 @@ services:
       interval: 15s
       timeout: 10s
       retries: 20
+
+  backend:
+    profiles: ["app"]
+    build: ../backend
+    container_name: backend-dev
+    depends_on:
+      oracle:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:oracle:thin:@//oracle:1521/FREEPDB1
+      DB_USER: ${APP_USER}
+      DB_PASSWORD: ${APP_USER_PASSWORD}
+    ports:
+      - "8080:8080"
+
+  frontend:
+    profiles: ["app"]
+    build: ../frontend
+    container_name: frontend-dev
+    depends_on:
+      - backend
+    ports:
+      - "8081:80"
 
 volumes:
   oracle-data:

@@ -1,0 +1,22 @@
+# Entorno local de desarrollo: Oracle Free (usa DBeaver para conectarte)
+# Arranque: docker compose up -d   |   Parada: docker compose down
+services:
+  oracle:
+    image: gvenzl/oracle-free:slim
+    container_name: oracle-dev
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+      APP_USER: ${APP_USER}
+      APP_USER_PASSWORD: ${APP_USER_PASSWORD}
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+
+volumes:
+  oracle-data:

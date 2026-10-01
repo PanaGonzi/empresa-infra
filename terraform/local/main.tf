@@ -16,15 +16,18 @@ provider "docker" {
 
 # --- Imagenes (se descargan de GHCR / Docker Hub) ---
 resource "docker_image" "oracle" {
-  name = "gvenzl/oracle-free:slim"
+  name         = "gvenzl/oracle-free:slim"
+  keep_locally = true # no borrar la imagen al destruir: otros contenedores pueden usarla
 }
 
 resource "docker_image" "backend" {
-  name = "ghcr.io/${var.github_owner}/empresa-backend:${var.backend_tag}"
+  name         = "ghcr.io/${var.github_owner}/empresa-backend:${var.backend_tag}"
+  keep_locally = true
 }
 
 resource "docker_image" "frontend" {
-  name = "ghcr.io/${var.github_owner}/empresa-frontend:${var.frontend_tag}"
+  name         = "ghcr.io/${var.github_owner}/empresa-frontend:${var.frontend_tag}"
+  keep_locally = true
 }
 
 # --- Red y volumen ---

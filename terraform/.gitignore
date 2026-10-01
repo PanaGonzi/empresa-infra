@@ -1,0 +1,8 @@
+# El estado puede contener secretos: nunca a git
+*.tfstate
+*.tfstate.*
+.terraform/
+crash.log
+*.tfvars
+!*.tfvars.example
+# El lock de proveedores SI se sube (.terraform.lock.hcl)

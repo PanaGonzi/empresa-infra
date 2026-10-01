@@ -1,0 +1,21 @@
+#cloud-config
+# Primer arranque del servidor: instala Docker y deja lista la carpeta de la aplicacion.
+# NO contiene contraseñas: el despliegue (workflow "Desplegar") escribe el .env y levanta la pila por SSH.
+package_update: true
+packages:
+  - docker.io
+  - docker-compose-v2
+  - iptables-persistent
+
+write_files:
+  - path: /opt/app/LEEME.txt
+    content: |
+      Carpeta de despliegue. El workflow "Desplegar" sube aqui docker-compose.deploy.yml y el .env.
+
+runcmd:
+  - systemctl enable --now docker
+  - usermod -aG docker ubuntu
+  - mkdir -p /opt/app && chown -R ubuntu:ubuntu /opt/app
+  # Las imagenes de Oracle traen iptables restrictivo: abrir el puerto 80 (la 22 ya esta abierta)
+  - iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+  - netfilter-persistent save
